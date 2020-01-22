@@ -1,0 +1,10 @@
+body{
+    background-color: #ff4c4c;
+}
+
+.wrapper {
+    height: 100%;
+    position: relative;
+    width: 100%;
+    overflow-y: visible;
+  }
