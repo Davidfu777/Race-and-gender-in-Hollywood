@@ -77,4 +77,5 @@ function leaveTitle() {
     .transition()
     .duration(3000)
     .attr("transform", "translateY(900)"); */
+  body.style('backgroung-color', 'white')
 }
