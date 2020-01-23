@@ -72,9 +72,9 @@ titleSeq
   .style("opacity", "1");
 
 function leaveTitle() {
-  titleSeq
-    .style("position", "absolute")
+  titleSeq.remove()
+   /* .style("position", "absolute")
     .transition()
     .duration(3000)
-    .attr("transform", "translateY(900)");
+    .attr("transform", "translateY(900)"); */
 }
