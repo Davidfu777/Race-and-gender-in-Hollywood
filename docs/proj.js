@@ -80,5 +80,6 @@ function leaveTitle() {
   body.style('background-color', 'blue')
   body.append("a")
     .attr("href", "https://docs.google.com/presentation/d/1CH3mna8_6Ee5iGW3BLgbYrqBDriYEOpVKAjy__0UUjY/edit?usp=sharing")
-    .style("font-size", "40px");
+    .style("font-size", "40px")
+    .html("slides");
 }
