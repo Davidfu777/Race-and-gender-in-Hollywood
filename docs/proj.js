@@ -144,7 +144,7 @@ titleCase = str => {
 };
 
 drawMainSection=(svg, data, section, offsetY)=>{
-  
+
 }
 
 drawSubSection = (svg, data, section, offsetY) => {
@@ -162,6 +162,8 @@ drawSubSection = (svg, data, section, offsetY) => {
     .duration(2000)
     .attr("x", 300)
     .attr("y", (d, i) => offsetY + i * 20)
+    .transition()
+    .duration(4000)
     .attr("height", 15)
     .attr("width", d => scale(parseInt(d[section])))
     .style("fill", "red");
@@ -171,8 +173,6 @@ drawSubSection = (svg, data, section, offsetY) => {
     .data(data)
     .enter()
     .append("rect")
-    .transition()
-    .duration(2000)
     .attr("x", 300)
     .attr("y", (d, i) => offsetY + i * 20)
     .attr("height", 15)
@@ -184,9 +184,10 @@ drawSubSection = (svg, data, section, offsetY) => {
     .data(data)
     .enter()
     .append("text")
+    .attr("x", 170)
+    .attr("y", offsetY)
     .transition()
     .duration(2000)
-    .attr("x", 170)
     .attr("y", (d, i) => offsetY + i * 20 + 10)
     .text(d => d.age)
     .style("color", "black")
@@ -197,13 +198,15 @@ drawSubSection = (svg, data, section, offsetY) => {
     .attr("x1", 165)
     .attr("y1", offsetY)
     .attr("x2", 165)
+    .attr("y2", offsetY)
+    .transition()
+    .duration(2000)
+    .attr("x2", 165)
     .attr("y2", offsetY + 9 * 20)
     .attr("stroke", "black");
 
   d3.select(svg)
     .append("text")
-    .transition()
-    .duration(2000)
     .attr("x", 0)
     .attr("y", offsetY + 80)
     .text(titleCase(section))
