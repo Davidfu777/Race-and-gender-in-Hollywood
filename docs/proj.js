@@ -77,7 +77,7 @@ function leaveTitle() {
     .transition()
     .duration(3000)
     .attr("transform", "translateY(900)"); */
-  body.style('background-color', 'blue')
+  body.style('background-color', 'white')
   body.append("a")
     .attr("href", "https://docs.google.com/presentation/d/1CH3mna8_6Ee5iGW3BLgbYrqBDriYEOpVKAjy__0UUjY/edit?usp=sharing")
     .style("font-size", "40px")
