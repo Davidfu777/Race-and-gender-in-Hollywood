@@ -16,7 +16,7 @@ titleSeq
 
 titleSeq
   .append("h1")
-  .text("Collobaorators: David Fu, Enoch MWesigwa")
+  .text("Collobaorators: David Fu, Enoch Mwesigwa")
   .style("font-size", "8px")
   .style("opacity", ".1")
   .transition()
