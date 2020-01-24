@@ -79,7 +79,7 @@ function leaveTitle() {
     .duration(3000)
     .attr("transform", "translateY(900)"); */
   body.style("background-color", "white")
-  ReadMaleVFemaleData();
+  ReadMaleAdata();
 }
 let MaleAdata = [];
 let FemaleAdata = [];
