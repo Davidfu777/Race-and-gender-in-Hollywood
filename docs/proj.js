@@ -82,4 +82,6 @@ function leaveTitle() {
     .attr("href", "https://docs.google.com/presentation/d/1CH3mna8_6Ee5iGW3BLgbYrqBDriYEOpVKAjy__0UUjY/edit?usp=sharing")
     .style("font-size", "40px")
     .html("slides");
+  
+  console.log("https://docs.google.com/presentation/d/1CH3mna8_6Ee5iGW3BLgbYrqBDriYEOpVKAjy__0UUjY/edit?usp=sharing")
 }
