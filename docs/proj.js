@@ -103,7 +103,7 @@ ReadMaleVFemaleData = () => {
     .duration(3000)
     .attr("id", "page-header")
     .style("opacity", 1)
-    .text("Distribution of Attractiveness Across Male and Female Actors")
+    .text("Distribution of Attractiveness Across Male and Female Actresses")
     .attr("class", "firstWave")
     .style("text-align", "center");
 
@@ -431,7 +431,7 @@ function toMaleData(svg) {
 
   setTimeout(function() {
     d3.select("#page-header").text(
-      "Distribution of attractiveness Among Male Actors by Age"
+      "Distribution of Attractiveness Among Actors by Age"
     );
     ReadMaleAdata();
   }, 4000);
@@ -456,7 +456,7 @@ function toFemaleData(svg) {
     .style("font-size", "4px")
     .transition()
     .duration(5000)
-    .text("Distribution of attractiveness Among Female Actors by Age")
+    .text("Distribution of attractiveness Among Actresses by Age")
     .style("font-size", "32px")
     .style("color", "black");
 
