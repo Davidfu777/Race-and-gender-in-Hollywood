@@ -73,25 +73,37 @@ titleSeq
   .style("opacity", "1");
 
 function leaveTitle() {
-  titleSeq.remove();
-  /* .style("position", "absolute")
+  d3.select(this).on("click", null);
+
+  titleSeq
     .transition()
     .duration(3000)
-    .attr("transform", "translateY(900)"); */
-  body.style("background-color", "white");
-  ReadMaleVFemaleData();
+    .style("opacity", "0")
+    .remove();
+
+  body
+    .transition()
+    .duration(3000)
+    .style("background-color", "white");
+
+  setTimeout(function() {
+    ReadMaleVFemaleData();
+  }, 3000);
 }
 let MaleAdata = [];
 let FemaleAdata = [];
 let MaleVFemaleData = [];
 
 ReadMaleVFemaleData = () => {
+  console.log("triggered");
   wrapper
     .append("h1")
+    .style("opacity", 0)
     .transition()
-    .duration(1000)
+    .duration(3000)
     .attr("id", "page-header")
-    .text("Distribution of Attractivenss Across Male and Female Actors")
+    .style("opacity", 1)
+    .text("Distribution of Attractiveness Across Male and Female Actors")
     .attr("class", "firstWave")
     .style("text-align", "center");
 
@@ -105,7 +117,7 @@ ReadMaleVFemaleData = () => {
     .attr("height", 1050);
   // .style("background-color", "gray");
 
-  d3.csv("../data/Male-vs-Female-Attractiveness.csv")
+  d3.csv("./data/Male-vs-Female-Attractiveness.csv")
     .then(data => {
       MaleVFemaleData = data;
     })
@@ -116,10 +128,14 @@ ReadMaleAdata = () => {
   wrapper
     .append("svg")
     .attr("id", "MaleASvg")
-    .attr("width", 600)
-    .attr("height", 1050);
+    .attr("transform", "translate(" + -300 + "," + 0 + ")")
+    .attr("width", 800)
+    .attr("height", 1050)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 0 + "," + 0 + ")");
 
-  d3.csv("../data/Male-Attractiveness-vs-Age.csv")
+  d3.csv("./data/Male-Attractiveness-vs-Age.csv")
     .then(data => {
       MaleAdata = data;
     })
@@ -130,9 +146,14 @@ ReadFemaleAdata = () => {
   wrapper
     .append("svg")
     .attr("id", "FemaleASvg")
-    .attr("width", 600)
-    .attr("height", 1050);
-  d3.csv("../data/Female-Attractiveness-vs-age.csv")
+    .attr("transform", "translate(" + -300 + "," + 0 + ")")
+    .attr("width", 800)
+    .attr("height", 1050)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 0 + "," + 0 + ")");
+
+  d3.csv("./data/Female-Attractiveness-vs-age.csv")
     .then(data => {
       FemaleAdata = data;
       console.log(FemaleAdata);
@@ -209,7 +230,7 @@ drawMainSection = (svg, data) => {
         );
         rectFocus(this, "vert");
       })
-      .attr("y", d => 500 )
+      .attr("y", d => 500)
       .transition("init")
       .duration(2000)
       .attr("x", (d, i) => offsetX + i * 20)
@@ -286,7 +307,10 @@ function drawLegend(svg, startX, startY) {
     .data(keys)
     .enter()
     .append("rect")
-    .on("click", d => (d == "Male" ? toMaleData(svg) : toFemaleData(svg)))
+    .on("click", function(d) {
+      d3.select(this).on("click", null);
+      d == "Male" ? toMaleData(svg) : toFemaleData(svg);
+    })
     .on("mouseover", function(d) {
       //mouseover
       d3.select("#" + d + "-label")
@@ -340,14 +364,14 @@ function drawLegend(svg, startX, startY) {
 
       let self = d3.select(this);
 
-      console.log(self.attr("x"), self.attr("y") )
+      console.log(self.attr("x"), self.attr("y"));
 
       d3.select(svg)
         .append("text")
         .attr("x", self.attr("x") + 10)
         .attr("y", self.attr("y"))
         .text("Click for break down by age")
-        .style("font-size", "46px")
+        .style("font-size", "46px");
 
       d3.select(this)
         .transition()
@@ -377,7 +401,10 @@ function drawLegend(svg, startX, startY) {
         .attr("height", size)
         .attr("width", size);
     })
-    .on("click", d => (d == "Male" ? toMaleData(svg) : toFemaleData(svg)))
+    .on("click", function(d) {
+      d3.select(this).on("click", null)
+      d == "Male" ? toMaleData(svg) : toFemaleData(svg);
+    })
     .attr("x", startX + size * 1.2)
     .attr("y", function(d, i) {
       return startY + i * (size + 5) + size / 2;
@@ -393,18 +420,49 @@ function drawLegend(svg, startX, startY) {
 }
 
 function toMaleData(svg) {
-  d3.select(svg).remove();
+  d3.select(svg)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + -30 + "," + 0 + ")")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 2000 + "," + 0 + ")")
+    .remove();
 
-  d3.select("#page-header").text(
-    "Distribution of attractiveness Among Male Actors by Age"
-  );
-
-  ReadMaleAdata();
+  setTimeout(function() {
+    d3.select("#page-header").text(
+      "Distribution of attractiveness Among Male Actors by Age"
+    );
+    ReadMaleAdata();
+  }, 4000);
 }
 
 function toFemaleData(svg) {
-  d3.select(svg).remove();
-  ReadFemaleAdata();
+  d3.select(svg)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + -30 + "," + 0 + ")")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 2000 + "," + 0 + ")")
+    .remove();
+
+  console.log(d3.select("#page-header").style("font-size"));
+
+  d3.select("#page-header")
+    .transition()
+    .duration(1000)
+    .style("color", "white")
+    .style("font-size", "4px")
+    .transition()
+    .duration(5000)
+    .text("Distribution of attractiveness Among Female Actors by Age")
+    .style("font-size", "32px")
+    .style("color", "black");
+
+  setTimeout(function() {
+    ReadFemaleAdata();
+  }, 4000);
 }
 
 function showStat(position, svg, total, section, sex) {
