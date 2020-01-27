@@ -87,11 +87,23 @@ let MaleVFemaleData = [];
 
 ReadMaleVFemaleData = () => {
   wrapper
+    .append("h1")
+    .transition()
+    .duration(1000)
+    .attr("id", "page-header")
+    .text("Distribution of Attractivenss Across Male and Female Actors")
+    .attr("class", "firstWave")
+    .style("text-align", "center");
+
+  wrapper.append("br").attr("class", "firstWave");
+
+  wrapper
     .append("svg")
     .attr("id", "MaleVFemaleASvg")
+    .style("margin-left", 100)
     .attr("width", 600)
     .attr("height", 1050);
-  //.style("background-color", "gray");
+  // .style("background-color", "gray");
 
   d3.csv("../data/Male-vs-Female-Attractiveness.csv")
     .then(data => {
@@ -188,9 +200,16 @@ drawMainSection = (svg, data) => {
         rectRegular(this, "vert");
       })
       .on("mouseover", function(d) {
-        showStat(d3.mouse(this), svg, totals[d.sex], d[section]);
+        showStat(
+          d3.mouse(this),
+          svg,
+          totals[d.sex],
+          d[section],
+          d.sex == "Male" ? " actors" : " actresses"
+        );
         rectFocus(this, "vert");
       })
+      .attr("y", d => 500 )
       .transition("init")
       .duration(2000)
       .attr("x", (d, i) => offsetX + i * 20)
@@ -318,6 +337,18 @@ function drawLegend(svg, startX, startY) {
     .attr("id", d => d + "-label")
     .on("mouseover", function(d) {
       //mouseover
+
+      let self = d3.select(this);
+
+      console.log(self.attr("x"), self.attr("y") )
+
+      d3.select(svg)
+        .append("text")
+        .attr("x", self.attr("x") + 10)
+        .attr("y", self.attr("y"))
+        .text("Click for break down by age")
+        .style("font-size", "46px")
+
       d3.select(this)
         .transition()
         .duration(100)
@@ -363,6 +394,11 @@ function drawLegend(svg, startX, startY) {
 
 function toMaleData(svg) {
   d3.select(svg).remove();
+
+  d3.select("#page-header").text(
+    "Distribution of attractiveness Among Male Actors by Age"
+  );
+
   ReadMaleAdata();
 }
 
@@ -371,7 +407,7 @@ function toFemaleData(svg) {
   ReadFemaleAdata();
 }
 
-function showStat(position, svg, total, section) {
+function showStat(position, svg, total, section, sex) {
   let mouse = { x: position[0], y: position[1] };
 
   let popup = d3
@@ -394,7 +430,7 @@ function showStat(position, svg, total, section) {
     .style("font-size", "6px")
     .transition()
     .duration(1000)
-    .text(section + " of " + total)
+    .text(section + " out of " + total + sex)
     .style("color", "red")
     .style("font-size", "14px");
 }
@@ -402,7 +438,7 @@ function rectFocus(element, orient) {
   d3.select(element)
     .transition()
     .duration(500)
-    .attr(orient == "vert" ? "width": "height", 17)
+    .attr(orient == "vert" ? "width" : "height", 17)
     .style("stroke-width", 6)
     .style("opacity", 0.4)
     .style("stroke", "gray");
@@ -412,7 +448,7 @@ function rectRegular(element, orient) {
   d3.select(element)
     .transition()
     .duration(500)
-    .attr(orient == "vert" ? "width": "height", 15)
+    .attr(orient == "vert" ? "width" : "height", 15)
     .style("stroke-width", 0)
     .style("opacity", 1)
     .style("stroke", null);
@@ -421,23 +457,22 @@ function rectRegular(element, orient) {
 }
 
 drawSubSection = (svg, data, section, offsetY) => {
-  total = data.reduce((a, b) => a + (parseInt(b[section]) || 0), 0);
+  let values = [];
 
+  data.forEach(obj => {
+    for (key in obj) {
+      if (key != "age") values.push(obj[key]);
+    }
+  });
+  total = values.reduce((a, b) => parseInt(a) + parseInt(b)); // data.reduce((a, b) => a + (parseInt(b[section]) || 0), 0);
 
-  let copy = JSON.parse(JSON.stringify(data));
- 
-  copy.forEach(obj=>{
-  //   delete obj.age
-   })
-
-
-
-  console.log(total, section)
+  console.log(total, section);
   let scale = d3
     .scaleLinear()
-    .domain(d3.extent(copy.map(Number)))
+    .domain(d3.extent(values.map(Number)))
     .range([0, 300]);
-   console.log(scale.domain())
+  console.log(scale.domain());
+
   d3.select(svg)
     .selectAll("rect#" + section.replace("/", "-"))
     .data(data)
@@ -447,14 +482,20 @@ drawSubSection = (svg, data, section, offsetY) => {
       rectRegular(this, "horiz");
     })
     .on("mouseover", function(d) {
-      showStat(d3.mouse(this), svg, total, d[section]);
+      showStat(
+        d3.mouse(this),
+        svg,
+        total,
+        d[section],
+        d.sex == "Male" ? " actors" : " actresses"
+      );
       rectFocus(this, "horiz");
     })
-    .transition()
+    .transition("init0")
     .duration(500)
     .attr("x", 300)
     .attr("y", (d, i) => offsetY + i * 20)
-    .transition()
+    .transition("init1")
     .duration(4000)
     .attr("height", 15)
     .attr("width", d => scale(parseInt(d[section])))
@@ -478,6 +519,7 @@ drawSubSection = (svg, data, section, offsetY) => {
     .append("text")
     .attr("x", 170)
     .attr("y", offsetY)
+    .style("font-size", "4px")
     .transition()
     .duration(2000)
     .attr("y", (d, i) => offsetY + i * 20 + 10)
