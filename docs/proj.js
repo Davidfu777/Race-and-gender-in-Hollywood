@@ -4,7 +4,7 @@ const titleSeq = wrapper.append("div").style("position", "relative");
 
 titleSeq
   .append("h1")
-  .text("Race and Gender in Hollywood")
+  .text("Gender in Hollywood")
   .style("font-size", "8px")
   .style("opacity", ".1")
   .transition()
@@ -87,8 +87,7 @@ function leaveTitle() {
     .style("background-color", "white");
 
   setTimeout(function() {
-    // ReadMaleVFemaleData();
-    ReadRaceGenderAgeData();
+    makeMenu();
   }, 3000);
 }
 let MaleAdata = [];
@@ -98,6 +97,126 @@ let MaleVFemaleData = [];
 let MaleRdata = [];
 let FemaleRdata = [];
 let RaceGenderAgeData = [];
+
+function makeMenu() {
+  wrapper
+    .append("h1")
+    .attr("class", "menu")
+    .text("Table of Context");
+
+  wrapper
+    .append("svg")
+    .attr("class", "menu")
+    .attr("height", 500)
+    .attr("width", 500)
+    .attr("id", "menu-svg")
+    .style("background-color", "white");
+
+  let menuSVG = d3.select("#menu-svg");
+
+  menuSVG
+    .append("rect")
+    .attr("class", "menu")
+    .attr("x", 5)
+    .attr("y", 75)
+    .attr("height", 50)
+    .attr("width", 150)
+    .on("click", function() {
+      d3.selectAll(".menu").remove();
+      ReadRaceGenderAgeData();
+    })
+    .on("mouseover", function() {
+      d3.select(this)
+        .transition()
+        .duration(1000)
+        .style("fill", "#606060")
+        .style("stroke-width", 10)
+        .style("stroke", "#606060");
+
+      d3.select("#menu-AG")
+        .style("font-weight", "bold")
+        .style("font-size", "18px");
+    })
+    .on("mouseleave", function() {
+      d3.select(this)
+        .transition()
+        .duration(1000)
+        .style("fill", "#d3d3d3")
+        .style("stroke-width", null)
+        .style("stroke", null);
+
+      d3.select("#menu-AG")
+        .style("font-weight", "normal")
+        .style("font-size", "20px");
+    })
+    .style("fill", "#d3d3d3");
+
+  menuSVG
+    .append("rect")
+    .attr("class", "menu")
+    .attr("x", 265)
+    .attr("y", 75)
+    .attr("height", 50)
+    .attr("width", 225)
+    .on("click", function() {
+      d3.selectAll(".menu").remove();
+      ReadMaleVFemaleData();
+    })
+    .on("mouseover", function() {
+      d3.select(this)
+        .transition()
+        .duration(1000)
+        .style("fill", "#606060")
+        .style("stroke-width", 10)
+        .style("stroke", "#606060");
+
+      d3.select("#menu-AG")
+        .style("font-weight", "bold")
+        .style("font-size", "18px");
+    })
+    .on("mouseleave", function() {
+      d3.select(this)
+        .transition()
+        .duration(1000)
+        .style("fill", "#d3d3d3")
+        .style("stroke-width", null)
+        .style("stroke", null);
+
+      d3.select("#menu-AG")
+        .style("font-weight", "normal")
+        .style("font-size", "20px");
+    })
+    .style("fill", "#d3d3d3");
+
+  menuSVG
+    .append("text")
+    .attr("class", "menu")
+    .attr("x", 10)
+    .attr("y", 105)
+    .text("Race and Gender")
+    .style("text-align", "center")
+    .attr("fill", "white")
+    .style("font-size", "20px")
+    .on("click", function() {
+      d3.selectAll(".menu").remove();
+      ReadRaceGenderAgeData();
+    });
+
+  menuSVG
+    .append("text")
+    .attr("class", "menu")
+    .attr("x", 270)
+    .attr("y", 105)
+    .text("Attractiveness and Gender")
+    .style("text-align", "center")
+    .attr("fill", "white")
+    .attr("id", "menu-AG")
+    .on("click", function() {
+      d3.selectAll(".menu").remove();
+      ReadMaleVFemaleData();
+    })
+    .style("font-size", "20px");
+}
 
 ReadMaleVFemaleData = () => {
   wrapper
@@ -462,9 +581,7 @@ function drawLegend(svg, startX, startY) {
     .attr("id", d => d + "-label")
     .on("mouseover", function(d) {
       //mouseover
-
       let self = d3.select(this);
-
       d3.select(svg)
         .append("text")
         .attr("x", self.attr("x") + 10)
