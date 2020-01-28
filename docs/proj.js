@@ -87,15 +87,19 @@ function leaveTitle() {
     .style("background-color", "white");
 
   setTimeout(function() {
-    ReadMaleVFemaleData();
+    // ReadMaleVFemaleData();
+    ReadRaceGenderAgeData();
   }, 3000);
 }
 let MaleAdata = [];
 let FemaleAdata = [];
 let MaleVFemaleData = [];
 
+let MaleRdata = [];
+let FemaleRdata = [];
+let RaceGenderAgeData = [];
+
 ReadMaleVFemaleData = () => {
-  console.log("triggered");
   wrapper
     .append("h1")
     .style("opacity", 0)
@@ -103,7 +107,7 @@ ReadMaleVFemaleData = () => {
     .duration(3000)
     .attr("id", "page-header")
     .style("opacity", 1)
-    .text("Distribution of Attractiveness Across Male and Female Actresses")
+    .text("Distribution of Attractiveness Across Male and Female Actors")
     .attr("class", "firstWave")
     .style("text-align", "center");
 
@@ -122,6 +126,92 @@ ReadMaleVFemaleData = () => {
       MaleVFemaleData = data;
     })
     .then(drawMaleVFemaleData);
+};
+
+ReadRaceGenderAgeData = () => {
+  wrapper
+    .append("h1")
+    .style("opacity", 0)
+    .transition()
+    .duration(3000)
+    .attr("id", "page-header")
+    .style("opacity", 1)
+    .text("Distribution of Race Across Male and Female Actors")
+    .attr("class", "firstWave")
+    .style("text-align", "center");
+
+  wrapper.append("br").attr("class", "firstWave");
+
+  wrapper
+    .append("svg")
+    .attr("id", "MaleVFemaleRSvg")
+    .style("margin-left", 100)
+    .attr("width", 600)
+    .attr("height", 1050);
+  // .style("background-color", "gray");
+
+  d3.csv("./data/Gender-Race-and-Age.csv")
+    .then(data => {
+      RaceGenderAgeData = data.slice(0, 2);
+    })
+    .then(drawRaceGenderAgeData);
+};
+
+ReadMaleRdata = () => {
+  wrapper
+    .append("svg")
+    .attr("id", "MaleRSvg")
+    .attr("transform", "translate(" + -300 + "," + 0 + ")")
+    //.attr("width", "100vw")
+    // .attr("height", "150%")
+    .style("viewBox", "0 0 800 2000")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 0 + "," + 0 + ")");
+
+  d3.csv("./data/Male-Race-vs-Age.csv")
+    .then(data => {
+      MaleRdata = data;
+    })
+    .then(drawMaleRdata);
+};
+
+ReadFemaleRdata = () => {
+  wrapper
+    .append("svg")
+    .attr("id", "FemaleRSvg")
+    .attr("transform", "translate(" + -300 + "," + 0 + ")")
+    .attr("width", 800)
+    .attr("height", "100%")
+    .style("overflow-y", "scroll")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 0 + "," + 0 + ")");
+
+  d3.csv("./data/Female-Race-vs-Age.csv")
+    .then(data => {
+      FemaleRdata = data;
+    })
+    .then(drawFemaleRdata);
+};
+
+ReadMaleRdata = () => {
+  wrapper
+    .append("svg")
+    .attr("id", "MaleRSvg")
+    .attr("transform", "translate(" + -300 + "," + 0 + ")")
+    .attr("width", 800)
+    .attr("height", "100%")
+    .style("overflow-y", "scroll")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 0 + "," + 0 + ")");
+
+  d3.csv("./data/Female-Race-vs-Age.csv")
+    .then(data => {
+      MaleRdata = data;
+    })
+    .then(drawMaleRdata);
 };
 
 ReadMaleAdata = () => {
@@ -175,7 +265,21 @@ titleCase = str => {
   return str.charAt(0).toUpperCase() + str.substring(1);
 };
 
-drawMainSection = (svg, data) => {
+normalize = str => {
+  let string = str.trim();
+  string = string.replace(new RegExp(" ", "g"), "-");
+
+  if (str.includes("/")) {
+    string = string.replace(new RegExp("/", "g"), "-");
+  }
+
+  if (str.includes(".")) {
+    string = string.split(".").join("");
+  }
+  return string;
+};
+
+drawMainSection = (svg, data, keys) => {
   let DataMale = data.filter(obj => {
     return obj.sex === "Male";
   })[0];
@@ -183,14 +287,6 @@ drawMainSection = (svg, data) => {
   let DataFemale = data.filter(obj => {
     return obj.sex === "Female";
   })[0];
-
-  let keys = [
-    "attractive",
-    "average/attractive",
-    "average",
-    "unattractive/average",
-    "unattractive"
-  ];
 
   totals = { Male: 0, Female: 0 };
   keys.forEach(section => {
@@ -213,7 +309,7 @@ drawMainSection = (svg, data) => {
 
   keys.forEach(section => {
     d3.select(svg)
-      .selectAll("rect#" + section.replace("/", "-"))
+      .selectAll("rect#" + normalize(section))
       .data(data)
       .enter()
       .append("rect")
@@ -242,7 +338,7 @@ drawMainSection = (svg, data) => {
       .style("fill", d => (d.sex == "Male" ? "red" : "orange"));
 
     d3.select(svg)
-      .selectAll("rect#" + section.replace("/", "-"))
+      .selectAll("rect#" + normalize(section))
       .data(data)
       .enter()
       .append("rect")
@@ -309,7 +405,12 @@ function drawLegend(svg, startX, startY) {
     .append("rect")
     .on("click", function(d) {
       d3.select(this).on("click", null);
-      d == "Male" ? toMaleData(svg) : toFemaleData(svg);
+      if (svg == "#MaleVFemaleRSvg") {
+        d == "Male" ? toMaleRData(svg) : toFemaleRData(svg);
+      } else {
+        alert(svg);
+        d == "Male" ? toMaleAData(svg) : toFemaleAData(svg);
+      }
     })
     .on("mouseover", function(d) {
       //mouseover
@@ -364,8 +465,6 @@ function drawLegend(svg, startX, startY) {
 
       let self = d3.select(this);
 
-      console.log(self.attr("x"), self.attr("y"));
-
       d3.select(svg)
         .append("text")
         .attr("x", self.attr("x") + 10)
@@ -402,8 +501,13 @@ function drawLegend(svg, startX, startY) {
         .attr("width", size);
     })
     .on("click", function(d) {
-      d3.select(this).on("click", null)
-      d == "Male" ? toMaleData(svg) : toFemaleData(svg);
+      d3.select(this).on("click", null);
+      if (svg == "#MaleVFemaleRSvg") {
+        d == "Male" ? toMaleRData(svg) : toFemaleRData(svg);
+      } else {
+        alert(svg);
+        d == "Male" ? toMaleAData(svg) : toFemaleAData(svg);
+      }
     })
     .attr("x", startX + size * 1.2)
     .attr("y", function(d, i) {
@@ -419,7 +523,7 @@ function drawLegend(svg, startX, startY) {
     });
 }
 
-function toMaleData(svg) {
+function toMaleAData(svg) {
   d3.select(svg)
     .transition()
     .duration(2000)
@@ -437,7 +541,7 @@ function toMaleData(svg) {
   }, 4000);
 }
 
-function toFemaleData(svg) {
+function toFemaleAData(svg) {
   d3.select(svg)
     .transition()
     .duration(2000)
@@ -462,6 +566,50 @@ function toFemaleData(svg) {
 
   setTimeout(function() {
     ReadFemaleAdata();
+  }, 4000);
+}
+
+function toMaleRData(svg) {
+  d3.select(svg)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + -30 + "," + 0 + ")")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 2000 + "," + 0 + ")")
+    .remove();
+
+  setTimeout(function() {
+    d3.select("#page-header").text("Distribution of Race Among Actors by Age");
+    ReadMaleRdata();
+  }, 4000);
+}
+
+function toFemaleRData(svg) {
+  d3.select(svg)
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + -30 + "," + 0 + ")")
+    .transition()
+    .duration(2000)
+    .attr("transform", "translate(" + 2000 + "," + 0 + ")")
+    .remove();
+
+  console.log(d3.select("#page-header").style("font-size"));
+
+  d3.select("#page-header")
+    .transition()
+    .duration(1000)
+    .style("color", "white")
+    .style("font-size", "4px")
+    .transition()
+    .duration(5000)
+    .text("Distribution of Race Among Actresses by Age")
+    .style("font-size", "32px")
+    .style("color", "black");
+
+  setTimeout(function() {
+    ReadFemaleRdata();
   }, 4000);
 }
 
@@ -514,25 +662,22 @@ function rectRegular(element, orient) {
   d3.select("g").remove();
 }
 
-drawSubSection = (svg, data, section, offsetY) => {
+drawSubSection = (svg, data, section, offsetY, sex) => {
   let values = [];
-
   data.forEach(obj => {
     for (key in obj) {
       if (key != "age") values.push(obj[key]);
     }
   });
-  total = values.reduce((a, b) => parseInt(a) + parseInt(b)); // data.reduce((a, b) => a + (parseInt(b[section]) || 0), 0);
+  total = values.reduce((a, b) => parseInt(a) + parseInt(b));
 
-  console.log(total, section);
   let scale = d3
     .scaleLinear()
     .domain(d3.extent(values.map(Number)))
     .range([0, 300]);
-  console.log(scale.domain());
 
   d3.select(svg)
-    .selectAll("rect#" + section.replace("/", "-"))
+    .selectAll("rect#" + normalize(section))
     .data(data)
     .enter()
     .append("rect")
@@ -545,12 +690,13 @@ drawSubSection = (svg, data, section, offsetY) => {
         svg,
         total,
         d[section],
-        d.sex == "Male" ? " actors" : " actresses"
+        sex == "Male" ? " actors" : " actresses"
       );
       rectFocus(this, "horiz");
     })
     .transition("init0")
     .duration(500)
+    .call(() => console.log(section))
     .attr("x", 300)
     .attr("y", (d, i) => offsetY + i * 20)
     .transition("init1")
@@ -560,7 +706,7 @@ drawSubSection = (svg, data, section, offsetY) => {
     .style("fill", svg.includes("Female") ? "orange" : "red");
 
   d3.select(svg)
-    .selectAll("rect#" + section.replace("/", "-"))
+    .selectAll("rect#" + normalize(section))
     .data(data)
     .enter()
     .append("rect")
@@ -571,7 +717,7 @@ drawSubSection = (svg, data, section, offsetY) => {
     .style("fill", "black");
 
   d3.select(svg)
-    .selectAll("text#" + section.replace("/", "-"))
+    .selectAll("text#" + normalize(section))
     .data(data)
     .enter()
     .append("text")
@@ -606,9 +752,87 @@ drawSubSection = (svg, data, section, offsetY) => {
     .style("font-size", "14px");
 };
 
+drawRaceGenderAgeData = () => {
+  console.log(RaceGenderAgeData);
+  drawMainSection("#MaleVFemaleRSvg", RaceGenderAgeData, [
+    "White",
+    "African American/Black",
+    "Hispanic/Latino",
+    "Asian",
+    "Non U.S. Nationality",
+    "Middle Eastern",
+    "Other",
+    "Indian",
+    "Multiracial",
+    "Native American/American Indian/Alaskan Native"
+  ]);
+};
+
+loopDraw = (svg, section, offsetY, timeout, data, sex) => {
+  setTimeout(function() {
+    drawSubSection(svg, data, section, offsetY, sex);
+  }, timeout);
+};
+
+drawMaleRdata = () => {
+  console.log(MaleRdata);
+  keys = [
+    "White",
+    "African American/Black",
+    "Hispanic/Latino",
+    "Asian",
+    "Non U.S. Nationality",
+    "Middle Eastern",
+    "Other",
+    "Indian",
+    "Multiracial",
+    "Native American/American Indian/Alaskan Native"
+  ];
+  let offsetY = 0;
+  let timeout = 2000;
+  let diff = 2000;
+  keys.forEach(section => {
+    loopDraw("#MaleRSvg", section, offsetY, timeout, MaleRdata, "Male");
+    diff -= diff * 0.2;
+    timeout += diff;
+    offsetY += 210;
+  });
+};
+
+drawFemaleRdata = () => {
+  console.log(MaleRdata);
+  keys = [
+    "White",
+    "African American/Black",
+    "Hispanic/Latino",
+    "Asian",
+    "Non U.S. Nationality",
+    "Middle Eastern",
+    "Other",
+    "Indian",
+    "Multiracial",
+    "Native American/American Indian/Alaskan Native"
+  ];
+  let offsetY = 0;
+  let timeout = 2000;
+  let diff = 2000;
+  keys.forEach(section => {
+    loopDraw("#FemaleRSvg", section, offsetY, timeout, FemaleRdata, "Female");
+    diff -= diff * 0.2;
+    timeout += diff;
+    offsetY += 210;
+  });
+};
+
 drawMaleVFemaleData = () => {
   console.log(MaleVFemaleData);
-  drawMainSection("#MaleVFemaleASvg", MaleVFemaleData);
+  drawMainSection("#MaleVFemaleASvg", MaleVFemaleData, [
+    "attractive",
+    "average/attractive",
+    "average",
+    "unattractive/average",
+    "unattractive"
+  ]);
 };
 
 drawMaleAdata = () => {

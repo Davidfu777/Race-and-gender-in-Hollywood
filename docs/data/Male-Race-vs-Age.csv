@@ -1,0 +1,10 @@
+age,African American/Black,Asian,Hispanic/Latino,Indian,Middle Eastern,Native American/American Indian/Alaskan Native,Non U.S. Nationality,Other,White
+Adult (30-39),1,0,0,0,0,0,0,0,4
+Child (3-9),0,0,0,1,0,0,0,0,1
+Early teen (13-15),13,2,4,0,3,0,2,8,55
+Mature Adult (55-64),6,2,1,1,2,0,1,2,67
+Middle Age (40-54),7,1,4,0,0,0,1,0,37
+Preteen (10-12),1,0,0,0,1,1,0,1,4
+Senior (65+),1,0,0,0,1,0,0,0,3
+Teenager (16-19),4,0,0,0,0,0,0,0,14
+Young adult (20-29),0,0,0,0,0,0,0,1,1
